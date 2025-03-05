@@ -1,0 +1,72 @@
+<!-- app/views/receptionist/patients/index.html.erb -->
+<h1>Patient Management</h1>
+
+<div class="search-box">
+  <%= form_tag receptionist_patients_path, method: :get do %>
+    <%= text_field_tag :search, params[:search], placeholder: "Search patients..." %>
+    <%= submit_tag "Search", class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<table class="patients-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date of Birth</th>
+      <th>Contact Number</th>
+      <th>Registered By</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% @patients.each do |patient| %>
+      <tr>
+        <td><%= patient.full_name %></td>
+        <td><%= patient.date_of_birth %></td>
+        <td><%= patient.contact_number %></td>
+        <td><%= patient.registered_by.username %></td>
+        <td>
+          <%= link_to 'View', receptionist_patient_path(patient), class: "btn btn-info" %>
+          <%= link_to 'Edit', edit_receptionist_patient_path(patient), class: "btn btn-primary" %>
+          <%= link_to 'Delete', receptionist_patient_path(patient), 
+                      method: :delete, 
+                      data: { confirm: "Are you sure?" },
+                      class: "btn btn-danger" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'New Patient', new_receptionist_patient_path, class: "btn btn-success" %>
+
+<!-- app/views/doctor/analytics/index.html.erb -->
+<h1>Patient Registration Analytics</h1>
+
+<div class="analytics-container">
+  <%= column_chart Patient.group_by_day(:created_at).count,
+                   xtitle: "Registration Date",
+                   ytitle: "Number of Patients",
+                   legend: true %>
+</div>
+
+<table class="patients-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date Registered</th>
+      <th>Registered By</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% @patients.each do |patient| %>
+      <tr>
+        <td><%= patient.full_name %></td>
+        <td><%= patient.created_at.strftime('%Y-%m-%d') %></td>
+        <td><%= patient.registered_by.username %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
